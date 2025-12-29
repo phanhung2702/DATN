@@ -1,9 +1,11 @@
-export interface User {
-    _id: string;
-    username: string;
-    email: string;
-    displayName: string;
-    avatarUrl?: string;
-    createdAt: string;
-    updatedAt: string;
-}
+export type User = {
+  _id?: string;
+  username?: string;
+  email?: string;
+  displayName?: string; // backend dùng displayName
+  avatarUrl?: string;
+  avatarId?: string;
+  role?: string;
+  createdAt?: string;
+  updatedAt?: string;
+};

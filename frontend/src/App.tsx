@@ -17,8 +17,7 @@ function App() {
           <Route path="/signin" element={<SignIn />} />
 
           {/* homepage inside main layout */}
-          <Route element={<ProtectedRoute />}>
-          
+          <Route element={<ProtectedRoute />}>  
           <Route
             path="/"
             element={

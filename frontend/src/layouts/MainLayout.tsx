@@ -1,5 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+// import UserMenu from '../components/auth/UserMenu'
+import AvatarMenu from '../components/AvatarMenu'
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -33,7 +35,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div className="flex items-center gap-4">
               <button className="h-10 w-10 rounded-full bg-white/80 dark:bg-input/30 flex items-center justify-center">🔔</button>
-              <div className="h-10 w-10 rounded-full bg-gradient-primary" />
+              <AvatarMenu />
             </div>
           </header>
 

@@ -1,6 +1,7 @@
 import type { User } from "./user";
 
 export interface AuthState {
+    fetchUser(): unknown;
     accessToken: string | null;
     user: User | null;
     loading: boolean;
@@ -17,4 +18,6 @@ export interface AuthState {
 
     signIn: (username: string, password: string) => Promise<void>;
     signOut: () => Promise<void>;
+    // getMe: () => Promise<void>;
+    refresh: () => Promise<void>;
 }

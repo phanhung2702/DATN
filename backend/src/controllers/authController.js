@@ -116,3 +116,35 @@ export const signOut = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+ // tạo accessToken mới dựa trên refreshToken
+export const refreshToken = async (req, res) => {
+    try {
+        // lấy refreshToken từ cookie
+        const token = req.cookies?.refreshToken;
+        if (!token) {
+            return res.status(401).json({ message: 'No refresh token provided' });
+        }
+
+        // so với refreshToken trong db
+        const session = await Session.findOne({ refreshToken: token });
+        if (!session) {
+            return res.status(403).json({ message: 'Invalid refresh token' });
+        }
+
+        // kiểm tra token đã hết hạn chưa
+        if (session.expiredAt < new Date()) {
+            return res.status(403).json({ message: 'Refresh token has expired' });
+        }
+
+        // nếu hợp lệ, tạo accessToken mới và trả về
+        const accessToken = jwt.sign({ userId: session.userId }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: ACCESS_TOKEN_TTL });
+
+        // return 
+        res.status(200).json({ accessToken });
+    }
+    catch (error) {
+        console.error('Error during token refresh:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+
+};
