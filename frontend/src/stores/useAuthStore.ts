@@ -71,6 +71,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } catch (error) {
             console.error('Error during sign in:', error);
             toast.error('Đăng nhập thất bại. Vui lòng thử lại.');
+            throw error;
         }
         finally {
             set({loading: false});
