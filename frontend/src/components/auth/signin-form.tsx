@@ -31,6 +31,12 @@ export function SigninForm({ className, ...props }: React.ComponentProps<"div">)
     const { username, password } = data;
     try {
     await signIn(username, password);
+    // lấy user mới nhất từ store sau khi login
+    const loggedInUser = useAuthStore.getState().user;
+    if (loggedInUser?.role === 'admin') {
+      navigate("/admin/");
+      return;
+    }
     navigate("/");
     } catch (error) {
       console.error('Error during sign in:', error);
