@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import uploadService from "../services/uploadService";
+// import uploadService from "../services/uploadService";
 import axios from "axios";
+import fileService from "../services/fileService";
+import songService from "../services/songService";
 
 
 export type AudioMeta = { duration?: number; size?: number; format?: string };
@@ -83,12 +85,34 @@ export default function useUpload() {
     const err = validate();
     if (err) { setError(err); return; }
     if (!audioFile) return;
-    const form = new FormData();
-    form.append("title", title); form.append("artist", artist); form.append("album", album); form.append("genre", genre); form.append("description", description);
-    if (coverFile) form.append("cover", coverFile); form.append("audio", audioFile);
+
     try {
       setStatus("uploading"); setProgress(0); setError(null);
-      await uploadService.uploadTrack(form, (p) => setProgress(Math.round(p)));
+
+      // 1) upload files -> get URLs
+      const filesForm = new FormData();
+      filesForm.append("audio", audioFile);
+      if (coverFile) filesForm.append("cover", coverFile);
+
+      const uploadRes = await fileService.uploadFiles(filesForm, (p) => setProgress(p));
+      const audioUrl: string = uploadRes.audioUrl ?? uploadRes.url ?? "";
+      const coverUrl: string | undefined = uploadRes.coverUrl;
+
+      if (!audioUrl) throw new Error("Không nhận được URL file âm thanh từ server.");
+
+      // 2) create song record with returned urls
+      const payload = {
+        title: title.trim(),
+        artist: artist.trim(),
+        album: album.trim() || undefined,
+        genre: genre || undefined,
+        lyrics: description || undefined,
+        url: audioUrl,
+        coverUrl: coverUrl,
+        duration: audioMeta?.duration,
+      };
+
+      await songService.createSong(payload);
       setStatus("success");
       setTimeout(reset, 1000);
     } catch (e: unknown) {

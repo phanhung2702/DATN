@@ -1,3 +1,4 @@
+import { count } from 'console';
 import Song from '../models/Song.js';
 
 export const createSong = async (req, res) => {
@@ -124,3 +125,41 @@ export const deleteSong = async (req, res) => {
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
+
+export const searchSongs = async (req, res) => {
+  try {
+    const { q, genre } = req.query;
+
+    const filter = {};
+
+    if (q) {
+      filter.$or = [
+        { title: { $regex: q, $options: "i" } },
+        { artist: { $regex: q, $options: "i" } },
+        { album: { $regex: q, $options: "i" } },
+      ];
+    }
+
+    if (genre) {
+      filter.genre = genre;
+    }
+
+    const songs = await Song.find(filter)
+      .limit(20)
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      count: songs.length,
+      data: songs, // ✅ chuẩn FE
+    });
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+

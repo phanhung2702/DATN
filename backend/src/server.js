@@ -8,6 +8,13 @@ import genreRoute from "./routes/genreRoute.js";
 import cookieParser from "cookie-parser";
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 import cors from "cors";
+import path from "path";
+import uploadRoute from "./routes/uploadRoute.js";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadsDir = path.join(__dirname, '..', 'public', 'uploads');
 
 
 dotenv.config();
@@ -23,12 +30,28 @@ app.use(cors({
   credentials: true,
 }));
 
+app.use((req, res, next) => {
+  console.log('REQ', req.method, req.path, 'headers:', { auth: req.headers.authorization ? 'present' : 'none' });
+  next();
+});
+
 // public routes
 app.use('/api/auth', authRoute);
+// serve uploads statically
+// app.use('/uploads', express.static(path.join(__dirname, '..', 'public', 'uploads')));
+
+app.use('/uploads', express.static(uploadsDir));
+
+app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
+
+// upload endpoint
+app.use('/api/upload', uploadRoute);
+
 // songs: some endpoints public (GET), others protected
 app.use('/api/songs', songRoute);
 // genres: public list/get, admin-only write
 app.use('/api/genres', genreRoute);
+
 
 // private routes
 app.use(protectedRoute);

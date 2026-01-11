@@ -11,6 +11,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     user: null,
     loading: false,
 
+    setAccessToken: (accessToken: string) => {
+        set({accessToken});
+    },
+
     clearState: () => {
         // remove axios auth header when clearing
         if (api && api.defaults && api.defaults.headers) {
@@ -54,6 +58,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             set({loading: true});
             // authService.SignIn now returns the accessToken string
             const accessToken = await authService.SignIn(username, password);
+            get().setAccessToken(accessToken);
             if (!accessToken) {
                 throw new Error('No access token returned from signin');
             }
@@ -92,9 +97,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     refresh: async () => {
         try {
             set({loading: true});
-            const {user, fetchUser} = get();
+            const {user, fetchUser, setAccessToken} = get();
             const accessToken = await authService.refresh();
-            set({accessToken}); 
+            setAccessToken(accessToken);
             // cập nhật lại header Authorization cho axios
             if (api && api.defaults && api.defaults.headers) {
                 api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;

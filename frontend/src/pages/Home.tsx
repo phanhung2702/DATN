@@ -1,19 +1,31 @@
 
+// import { Button } from '@/components/ui/button'
 import PlaylistCard from '../components/PlaylistCard'
+// import api from '@/lib/axios'
+// import { toast } from 'sonner';
 
 export default function Home() {
+  // const handleOnclick = async () => {
+  //   try {
+  //     await api.get('/user/test', {withCredentials: true});
+  //     toast.success('API test successful!');
+  //   } catch (error) {
+  //     toast.error('API test failed.');
+  //     console.error('API test error:', error);
+  //   }
+  // };
   return (
     <div className="space-y-8">
       {/* Quick pills */}
       <div className="flex gap-4 overflow-x-auto pb-2">
         {['Top Hits 2024','Nhạc Lofi','Workout Mix','Acoustic'].map((t) => (
-          <div key={t} className="flex items-center gap-3 bg-white/80 dark:bg-input/30 px-6 py-3 rounded-full shadow-soft">
+          <div key={t} className="flex items-center gap-3 bg-white/80 dark:bg-input/30 px-6 py-3 rounded-full shadow-soft-lg whitespace-nowrap">
             <div className="h-10 w-10 rounded-full bg-muted/30" />
             <div className="font-medium">{t}</div>
           </div>
         ))}
       </div>
-
+{/* :bg-input/30 px-4 py-2 rounded-full shadow-sm whitespace-nowrap */}
       {/* Recommended grid */}
       <section>
         <div className="flex items-center justify-between mb-4">
@@ -28,6 +40,7 @@ export default function Home() {
           <PlaylistCard title="Deep Focus" description="Nhạc không lời giúp bạn tập trung" />
         </div>
       </section>
+      {/* <Button onClick={handleOnclick}>test</Button> */}
 
       {/* Another row */}
       <section>

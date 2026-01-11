@@ -1,12 +1,15 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { useAuthStore } from '@/stores/useAuthStore';
 import UserProfileModal from './UserProfileModal';
+import { Moon, Sun } from 'lucide-react';
+import { useThemeStore } from '@/stores/useThemeStore';
 
 export default function AvatarMenu() {
   const { user, signOut } = useAuthStore();
   const [open, setOpen] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
+  const { theme, toggleTheme } = useThemeStore();
 
   // close dropdown when clicking outside
   useEffect(() => {
@@ -46,6 +49,22 @@ export default function AvatarMenu() {
           >
             Hồ sơ người dùng
           </button>
+          {/* Light / Dark mode */}
+    <button
+      className="w-full flex items-center gap-2 px-4 py-2 hover:bg-muted/10"
+      onClick={toggleTheme}
+    >
+      {theme === "dark" ? (
+        <>
+          <Sun size={16} /> Light Mode
+        </>
+      ) : (
+        <>
+          <Moon size={16} /> Dark Mode
+        </>
+      )}
+    </button>
+
           <button
             className="w-full text-left px-4 py-2 hover:bg-muted/10"
             onClick={() => {

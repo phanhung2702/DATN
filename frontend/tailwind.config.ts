@@ -116,4 +116,5 @@ export default {
     },
   },
   plugins: [tailwindcssAnimate],
+  darkMode: 'class',
 } satisfies Config;
