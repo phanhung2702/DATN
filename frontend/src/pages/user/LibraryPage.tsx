@@ -1,16 +1,20 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/axios";
-import SongGrid from "@/components/SongGrid";
-import EmptyState from "@/components/EmptyState";
+import SongGrid from "@/components/song/SongGrid";
+import EmptyState from "@/components/shared/EmptyState";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import PageTitle from "@/components/PageTitle";
+import PageTitle from "@/components/layout/PageTitle";
 
 type Song = {
   _id: string;
   title: string;
   artist: string;
-  coverImage?: string;
+  coverUrl: string;
+  audioUrl: string;
+  duration?: number;
+  createdAt?: string;
 };
+
 
 export default function LibraryPage() {
   const [mySongs, setMySongs] = useState<Song[]>([]);

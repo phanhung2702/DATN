@@ -102,3 +102,51 @@ export const getUsers = async (req, res) => {
 export const test = async (req, res) => {
     return res.sendStatus(204);
 };
+
+export const toggleLikeSong = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const { songId } = req.params;
+
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        // Nếu likedSongs bị undefined thì gán nó là mảng rỗng
+        if (!user.likedSongs) {
+            user.likedSongs = [];
+        }
+        const isLiked = user.likedSongs.includes(songId);
+
+        if (isLiked) {
+            user.likedSongs.pull(songId); // Bỏ thích
+        } else {
+            user.likedSongs.push(songId); // Thêm vào danh sách thích
+        }
+
+        await user.save();
+        return res.status(200).json({
+            success: true,
+            likedSongs: user.likedSongs, // Trả về danh sách mới để FE cập nhật Store
+            isLiked: !isLiked
+        });
+    } catch (error) {
+        console.error('Error in toggleLikeSong controller:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};
+
+export const getFavoriteSongs = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const user = await User.findById(userId).populate({
+            path: 'likedSongs',
+            options: { sort: { createdAt: -1 } } // Sắp xếp theo ngày thêm vào
+        });
+        if (!user) return res.status(404).json({ message: "User not found" });
+
+        return res.status(200).json({ favoriteSongs: user.likedSongs });
+    } catch (error) {
+        console.error('Error in getFavoriteSongs controller:', error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+};

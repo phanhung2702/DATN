@@ -5,6 +5,8 @@ export interface AuthState {
     accessToken: string | null;
     user: User | null;
     loading: boolean;
+    likedSongs: string[]; // mảng ID bài hát đã thích
+    setLikedSongs: (songs: string[]) => void;
 
     setAccessToken(accessToken: string): void;
     clearState: () => void;

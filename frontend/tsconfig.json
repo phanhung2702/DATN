@@ -6,6 +6,12 @@
   ],
   "compilerOptions": {
     "baseUrl": ".",
+    "moduleResolution": "bundler", // Hoặc "node16"
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "module": "ESNext",
     "paths": {
       "@/*": ["./src/*"]
     }

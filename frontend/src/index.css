@@ -317,6 +317,19 @@
     }
   }
 }
+/* Loại bỏ màu nền mặc định của thanh track trong Chrome/Safari */
+input[type="range"]::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+/* Loại bỏ màu nền mặc định trong Firefox */
+input[type="range"]::-moz-range-track {
+  background: transparent;
+}
+
+.fill-1 {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
 
 
 

@@ -2,20 +2,22 @@ import ProtectedRoute from './components/auth/ProtectedRoute'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import SignIn from './pages/auth/SignIn'
 import SignUp from './pages/auth/SignUp'
-import Home from './pages/Home'
+import Home from './pages/user/Home'
 import MainLayout from './layouts/MainLayout'
 import AdminLayout from './layouts/AdminLayout'
 import { Toaster } from 'sonner'
 import AdminUploadPage from './pages/admin/AdminUploadPage'
 import AdminLibrary from './pages/admin/AdminLibrary'
 import SearchPage from './pages/user/SearchPage'
-import ThemeInit from './components/ThemInit'   // 👈 thêm dòng này
+import ThemeInit from './components/shared/ThemInit'   // 👈 thêm dòng này
 import { useEffect } from 'react';
 import { useThemeStore } from './stores/useThemeStore';
-import LibraryPage from './pages/user/LibraryPage'
-import CreatePlaylistPage from './pages/user/CreatePlaylistPage'
+// import LibraryPage from './pages/user/LibraryPage'
+// import CreatePlaylistPage from './pages/user/CreatePlaylistPage'
 import FavoritePage from './pages/user/FavoritePage'
 import UsersPage from './pages/admin/AdminUserPage'
+import PlaylistPage from './pages/user/PlaylistPage'
+import PlaylistDetailPage from './pages/user/PlaylistDetailPage'
 
 function App() {
   const { theme } = useThemeStore();
@@ -56,19 +58,16 @@ function App() {
               }
             />
 
-            <Route
-  path="/library"
-  element={
-    <MainLayout>
-      <LibraryPage />
-    </MainLayout>
-  }
-/>
+            <Route path="/playlist/:id" element={
+              <MainLayout>
+                <PlaylistDetailPage />
+              </MainLayout>
+            } />
 <Route
-  path="/playlist/create"
+  path="/playlists"
   element={
     <MainLayout>
-      <CreatePlaylistPage />
+      <PlaylistPage />
     </MainLayout>
   }
 />

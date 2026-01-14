@@ -35,6 +35,11 @@ const userSchema = new mongoose.Schema({
         enum: ['user', 'admin'],
         default: 'user'
     },
+    likedSongs: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Song',
+        default: [] // luôn khởi tạo mảng rỗng
+    }], 
 }, 
     { 
     timestamps: true,

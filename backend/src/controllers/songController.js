@@ -1,12 +1,13 @@
 import { count } from 'console';
 import Song from '../models/Song.js';
+import { url } from 'inspector';
 
 export const createSong = async (req, res) => {
   try {
-    const { title, artist, album, duration, url, coverUrl, genre, lyrics } = req.body;
+    const { title, artist, album, duration, audioUrl, coverUrl, genre, lyrics } = req.body;
 
-    if (!title || !artist || !url) {
-      return res.status(400).json({ message: 'Thiếu trường bắt buộc: title, artist hoặc url' });
+    if (!title || !artist || !audioUrl) {
+      return res.status(400).json({ message: 'Thiếu trường bắt buộc: title, artist hoặc audioUrl' });
     }
 
     const song = new Song({
@@ -14,7 +15,7 @@ export const createSong = async (req, res) => {
       artist,
       album,
       duration,
-      url,
+      audioUrl,
       coverUrl,
       genre,
       lyrics,
@@ -97,7 +98,7 @@ export const updateSong = async (req, res) => {
     }
 
     const updates = {};
-    const fields = ['title', 'artist', 'album', 'duration', 'url', 'coverUrl', 'genre', 'lyrics'];
+    const fields = ['title', 'artist', 'album', 'duration', 'audioUrl', 'coverUrl', 'genre', 'lyrics'];
     fields.forEach(f => { if (req.body[f] !== undefined) updates[f] = req.body[f]; });
 
     const updated = await Song.findByIdAndUpdate(id, updates, { new: true });
@@ -114,10 +115,26 @@ export const deleteSong = async (req, res) => {
     const song = await Song.findById(id);
     if (!song) return res.status(404).json({ message: 'Song not found' });
 
+    // 1. Kiểm tra quyền: chỉ uploader hoặc admin mới được xóa
     if (song.uploader && req.user && String(song.uploader) !== String(req.user._id) && req.user.role !== 'admin') {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
+    // 2. Xóa file vật lý trong thư mục public/uploads nếu cần thiết
+    const deleteFile = (url) => {
+      if (url && url.includes('/uploads/')) {
+        const filename = url.split('/uploads/')[1];
+        const filePath = path.join(__dirname, '..', 'public', 'uploads', filename);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+          console.log(`Deleted file: ${filePath}`);
+        }
+      };
+
+      deleteFile(song.audioUrl);
+      deleteFile(song.coverUrl);
+    }
+      // 3.  Xóa trong database
     await Song.findByIdAndDelete(id);
     return res.status(200).json({ message: 'Song deleted' });
   } catch (error) {
@@ -162,4 +179,56 @@ export const searchSongs = async (req, res) => {
   }
 };
 
+// Tăng lượt nghe (Gọi từ FE khi nhạc chạy được > 10s)
+export const incrementPlayCount = async (req, res) => {
+  try {
+    await Song.findByIdAndUpdate(req.params.id, { $inc: { plays: 1 } });
+    res.status(200).json({ success: true });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Lấy Top bài hát nghe nhiều nhất
+export const getTopSongs = async (req, res) => {
+  try {
+    const songs = await Song.find().sort({ plays: -1 }).limit(10);
+    res.status(200).json(songs);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Lấy bài hát liên quan (Cùng thể loại hoặc nghệ sĩ)
+export const getRelatedSongs = async (req, res) => {
+  try {
+    const song = await Song.findById(req.params.id);
+    const related = await Song.find({
+      _id: { $ne: song._id },
+      $or: [{ genre: song.genre }, { artist: song.artist }]
+    }).limit(6);
+    res.status(200).json(related);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Thống kê cho Admin Dashboard
+export const getAdminStats = async (req, res) => {
+  try {
+    const [totalSongs, totalPlays, genreStats] = await Promise.all([
+      Song.countDocuments(),
+      Song.aggregate([{ $group: { _id: null, total: { $sum: "$plays" } } }]),
+      Song.aggregate([{ $group: { _id: "$genre", count: { $sum: 1 } } }])
+    ]);
+
+    res.status(200).json({
+      totalSongs,
+      totalPlays: totalPlays[0]?.total || 0,
+      genreStats
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 

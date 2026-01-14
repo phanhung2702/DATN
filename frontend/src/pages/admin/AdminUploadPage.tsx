@@ -1,7 +1,7 @@
 import React, { type JSX } from "react";
 import useUpload from "../../hooks/useUpload";
-import CoverUploader from "../../components/CoverUploader";
-import AudioDropzone from "../../components/AudioDropzone";
+import CoverUploader from "../../components/upload/CoverUploader";
+import AudioDropzone from "../../components/upload/AudioDropzone";
 
 export default function AdminUploadPage(): JSX.Element {
   const {
@@ -129,10 +129,11 @@ export default function AdminUploadPage(): JSX.Element {
                 >
                   <option>Pop</option>
                   <option>Hip-hop/Rap</option>
-                  <option>Indie</option>
+                  <option>Remix</option>
                   <option>R&B</option>
-                  <option>Electronic</option>
+                  <option>EDM</option>
                   <option>Ballad</option>
+                  <option>Vinahouse</option>
                 </select>
               </div>
             </div>

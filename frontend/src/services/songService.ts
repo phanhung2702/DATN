@@ -7,7 +7,7 @@ export default {
     album?: string;
     genre?: string;
     lyrics?: string;
-    url: string;
+    audioUrl: string;
     coverUrl?: string;
     duration?: number;
   }) => {

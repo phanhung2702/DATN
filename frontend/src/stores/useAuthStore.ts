@@ -10,6 +10,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     accessToken: null,
     user: null,
     loading: false,
+    likedSongs: [],
+    // SỬA LẠI HÀM NÀY ĐỂ CẬP NHẬT NGAY LẬP TỨC
+    setLikedSongs: (songs: string[]) => {
+        set((state) => ({
+            // 1. Tạo bản sao mảng mới để đảm bảo Reactivity
+            likedSongs: [...(songs || [])], 
+            // 2. Cập nhật luôn mảng likedSongs bên trong object user để đồng bộ dữ liệu
+            user: state.user ? { ...state.user, likedSongs: [...(songs || [])] } : state.user
+        }));
+    },
 
     setAccessToken: (accessToken: string) => {
         set({accessToken});
@@ -20,7 +30,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         if (api && api.defaults && api.defaults.headers) {
             delete api.defaults.headers.common['Authorization'];
         }
-        set({accessToken: null, user: null, loading: false});
+        set({accessToken: null, user: null, loading: false, likedSongs: []});
     },
 
     // fetch current user from backend and set to store
@@ -30,7 +40,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             const data = await authService.getMe();
             // backend returns { user }
             const user: User = data.user ?? data;
-            set({user});
+            set({
+                user, 
+                likedSongs: user.likedSongs || []});
         } catch (error) {
             console.error('Error fetching user:', error);
             // nếu lỗi 401/403 thì clear state
@@ -114,5 +126,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } finally {
             set({loading: false});
         }
-    }
+    },
+
 }));

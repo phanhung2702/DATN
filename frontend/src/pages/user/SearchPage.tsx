@@ -99,14 +99,16 @@ import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Loader2, Music } from "lucide-react";
 import api from "../../lib/axios";
-import SongCard from "../../components/SongCard";
+import SongCard from "../../components/song/SongCard";
 
 type Song = {
   _id: string;
   title: string;
   artist: string;
-  coverImage?: string;
+  coverUrl: string;
+  audioUrl: string;
 };
+
 
 export default function SearchPage() {
   const [params] = useSearchParams();

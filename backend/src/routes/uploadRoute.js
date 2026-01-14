@@ -3,17 +3,16 @@ import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
 import { uploadFiles } from '../controllers/uploadController.js';
+import { fileURLToPath } from 'url';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // import { protectedRoute } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 
-const uploadsDir = path.join(
-  path.resolve(),
-  'backend',
-  'public',
-  'uploads'
-);
+const uploadsDir = path.join(__dirname, '..', '..', 'public', 'uploads');
+console.log("Multer will save files to:", uploadsDir);
 
 // ensure uploads directory exists
 if (!fs.existsSync(uploadsDir)) {

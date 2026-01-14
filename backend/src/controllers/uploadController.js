@@ -8,8 +8,9 @@ export const uploadFiles = (req, res) => {
 
     const baseUrl = process.env.SERVER_URL || `${req.protocol}://${req.get('host')}`;
 
-    const audioFilename = audio?.filename ?? audio?.path ? path.basename(audio.path ?? "") : undefined;
-    const coverFilename = cover?.filename ?? cover?.path ? path.basename(cover.path ?? "") : undefined;
+    // Multer đã lưu filename trong object file, dùng trực tiếp luôn
+    const audioFilename = audio?.filename;
+    const coverFilename = cover?.filename;
 
     const audioUrl = audioFilename ? `${baseUrl}/uploads/${audioFilename}` : undefined;
     const coverUrl = coverFilename ? `${baseUrl}/uploads/${coverFilename}` : undefined;

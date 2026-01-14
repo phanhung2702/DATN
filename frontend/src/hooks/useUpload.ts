@@ -95,7 +95,7 @@ export default function useUpload() {
       if (coverFile) filesForm.append("cover", coverFile);
 
       const uploadRes = await fileService.uploadFiles(filesForm, (p) => setProgress(p));
-      const audioUrl: string = uploadRes.audioUrl ?? uploadRes.url ?? "";
+      const audioUrl: string = uploadRes.audioUrl ?? uploadRes.audioUrl ?? "";
       const coverUrl: string | undefined = uploadRes.coverUrl;
 
       if (!audioUrl) throw new Error("Không nhận được URL file âm thanh từ server.");
@@ -107,7 +107,7 @@ export default function useUpload() {
         album: album.trim() || undefined,
         genre: genre || undefined,
         lyrics: description || undefined,
-        url: audioUrl,
+        audioUrl: audioUrl,
         coverUrl: coverUrl,
         duration: audioMeta?.duration,
       };
